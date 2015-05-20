@@ -1,4 +1,4 @@
-package edu.colostate.cs.dsg.benchmark.storm;
+package edu.colostate.cs.dsg.benchmark.storm.bolt;
 
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -6,6 +6,8 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
+import edu.colostate.cs.dsg.benchmark.storm.util.Constants;
+import edu.colostate.cs.dsg.benchmark.storm.util.Util;
 
 import java.util.Set;
 import java.util.TreeSet;

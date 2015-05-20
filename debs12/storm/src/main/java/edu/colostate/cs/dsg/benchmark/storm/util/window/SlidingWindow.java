@@ -1,4 +1,4 @@
-package edu.colostate.cs.dsg.benchmark.storm;
+package edu.colostate.cs.dsg.benchmark.storm.util.window;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

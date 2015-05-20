@@ -1,4 +1,4 @@
-package edu.colostate.cs.dsg.benchmark.storm;
+package edu.colostate.cs.dsg.benchmark.storm.util;
 
 /**
  * Author: Thilina
@@ -7,7 +7,7 @@ package edu.colostate.cs.dsg.benchmark.storm;
 public class Constants {
     public static final String INPUT_FILE_PATH = "input-file-path";
 
-    class DataFields {
+    public class DataFields {
         public static final String TIMESTAMP = "timestamp";
         public static final String BM_VAL = "bm-val";
         public static final String EDGE = "edge";
@@ -15,7 +15,7 @@ public class Constants {
         public static final String CORR_TS = "corr-ts";
     }
 
-    class Streams {
+    public class Streams {
         public static final String STREAM_BM_05 = "stream-BM05";
         public static final String STREAM_BM_06 = "stream-BM06";
         public static final String STREAM_BM_07 = "stream-BM07";

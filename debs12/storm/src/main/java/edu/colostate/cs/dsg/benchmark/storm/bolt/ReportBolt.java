@@ -1,4 +1,4 @@
-package edu.colostate.cs.dsg.benchmark.storm;
+package edu.colostate.cs.dsg.benchmark.storm.bolt;
 
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
