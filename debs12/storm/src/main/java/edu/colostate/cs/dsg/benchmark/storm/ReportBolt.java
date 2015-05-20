@@ -10,13 +10,12 @@ import org.apache.log4j.Logger;
  * Author: Thilina
  * Date: 5/19/15
  */
-public class PrintBolt extends BaseBasicBolt {
+public class ReportBolt extends BaseBasicBolt {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintBolt.class);
+    private static final Logger LOGGER = Logger.getLogger(ReportBolt.class);
 
     public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
-        System.out.println(tuple.getLongByField(Constants.DataFields.TIMESTAMP) + ": "  +
-                tuple.getIntegerByField(Constants.DataFields.EDGE));
+        LOGGER.info(tuple.toString());
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {

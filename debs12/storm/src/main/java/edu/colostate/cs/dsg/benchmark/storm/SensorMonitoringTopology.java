@@ -12,7 +12,9 @@ public class SensorMonitoringTopology {
 
     public static void main(String[] args) {
         TopologyBuilder builder = new TopologyBuilder();
+        // input
         builder.setSpout("file-input-spout", new FileReaderSpout(), 1);
+        // phase 1
         builder.setBolt("BM05-Bolt", new StateChangeDetectionBolt(5), 1).globalGrouping(
                 "file-input-spout", Constants.Streams.STREAM_BM_05);
         builder.setBolt("BM06-Bolt", new StateChangeDetectionBolt(6), 1).globalGrouping(
@@ -25,12 +27,26 @@ public class SensorMonitoringTopology {
                 "file-input-spout", Constants.Streams.STREAM_BM_09);
         builder.setBolt("BM10-Bolt", new StateChangeDetectionBolt(10), 1).globalGrouping(
                 "file-input-spout", Constants.Streams.STREAM_BM_10);
-        builder.setBolt("print-bolt", new PrintBolt(), 1).globalGrouping("BM05-Bolt", Util.getEdgeStreamId(5));
-        builder.setBolt("print-bolt2", new PrintBolt(), 1).globalGrouping("BM06-Bolt", Util.getEdgeStreamId(6));
-        builder.setBolt("print-bolt3", new PrintBolt(), 1).globalGrouping("BM07-Bolt", Util.getEdgeStreamId(7));
-        builder.setBolt("print-bolt4", new PrintBolt(), 1).globalGrouping("BM08-Bolt", Util.getEdgeStreamId(8));
-        builder.setBolt("print-bolt5", new PrintBolt(), 1).globalGrouping("BM09-Bolt", Util.getEdgeStreamId(9));
-        builder.setBolt("print-bolt6", new PrintBolt(), 1).globalGrouping("BM10-Bolt", Util.getEdgeStreamId(10));
+        // phase 2
+        builder.setBolt("BM58-Bolt", new CombinedStateChangeDetectionBolt(5,8), 1).globalGrouping("BM05-Bolt", Util.getEdgeStreamId(5)).
+                globalGrouping("BM08-Bolt", Util.getEdgeStreamId(8));
+        builder.setBolt("BM69-Bolt", new CombinedStateChangeDetectionBolt(6,9), 1).globalGrouping("BM06-Bolt", Util.getEdgeStreamId(6)).
+                globalGrouping("BM09-Bolt", Util.getEdgeStreamId(9));
+        builder.setBolt("BM710-Bolt", new CombinedStateChangeDetectionBolt(7,10), 1).globalGrouping("BM07-Bolt", Util.getEdgeStreamId(7)).
+                globalGrouping("BM10-Bolt", Util.getEdgeStreamId(10));
+        // phase 3 - Monitoring
+        builder.setBolt("Monitoring-58", new MonitoringBolt(Util.getCorrelatedChangeOfStateStreamId(5,8)), 1).
+                globalGrouping("BM58-Bolt", Util.getCorrelatedChangeOfStateStreamId(5,8));
+        builder.setBolt("Monitoring-69", new MonitoringBolt(Util.getCorrelatedChangeOfStateStreamId(6,9)), 1).
+                globalGrouping("BM69-Bolt", Util.getCorrelatedChangeOfStateStreamId(6,9));
+        builder.setBolt("Monitoring-710", new MonitoringBolt(Util.getCorrelatedChangeOfStateStreamId(7,10)), 1).
+                globalGrouping("BM710-Bolt", Util.getCorrelatedChangeOfStateStreamId(7,10));
+
+        builder.setBolt("Report-Bolt", new ReportBolt(), 1).
+                globalGrouping("Monitoring-58", Util.getMonitoringStreamId(Util.getCorrelatedChangeOfStateStreamId(5,8))).
+                globalGrouping("Monitoring-69", Util.getMonitoringStreamId(Util.getCorrelatedChangeOfStateStreamId(6,9))).
+                globalGrouping("Monitoring-710", Util.getMonitoringStreamId(Util.getCorrelatedChangeOfStateStreamId(7,10)));
+
         Config conf = new Config();
         //conf.put(Config.TOPOLOGY_DEBUG, false);
 

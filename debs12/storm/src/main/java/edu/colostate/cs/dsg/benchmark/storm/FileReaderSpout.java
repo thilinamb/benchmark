@@ -23,8 +23,6 @@ public class FileReaderSpout extends BaseRichSpout {
 
     private BufferedReader bufferedReader;
     private SpoutOutputCollector collector;
-    private int tupleCount = 0;
-
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         outputFieldsDeclarer.declareStream(Constants.Streams.STREAM_BM_05,
@@ -55,10 +53,6 @@ public class FileReaderSpout extends BaseRichSpout {
         String nextLine = null;
         try {
             nextLine = bufferedReader.readLine();
-            tupleCount++;
-            if(tupleCount % 100000 == 0){
-                System.out.println("Processed " + (double)tupleCount/77576214 + " of tuples.");
-            }
         } catch (IOException e) {
             LOGGER.error("Error reading from the file.", e);
         }
@@ -71,8 +65,6 @@ public class FileReaderSpout extends BaseRichSpout {
             collector.emit(Constants.Streams.STREAM_BM_08, new Values(timeStamp, Integer.parseInt(fields[4])));
             collector.emit(Constants.Streams.STREAM_BM_09, new Values(timeStamp, Integer.parseInt(fields[5])));
             collector.emit(Constants.Streams.STREAM_BM_10, new Values(timeStamp, Integer.parseInt(fields[6])));
-        } else {
-            System.out.println("Finished reading the input!");
         }
     }
 

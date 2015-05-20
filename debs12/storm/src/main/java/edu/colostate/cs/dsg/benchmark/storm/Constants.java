@@ -11,6 +11,8 @@ public class Constants {
         public static final String TIMESTAMP = "timestamp";
         public static final String BM_VAL = "bm-val";
         public static final String EDGE = "edge";
+        public static final String CORR_DT = "corr-dt";
+        public static final String CORR_TS = "corr-ts";
     }
 
     class Streams {
