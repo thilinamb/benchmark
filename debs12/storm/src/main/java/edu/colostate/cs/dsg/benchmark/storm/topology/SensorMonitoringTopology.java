@@ -2,20 +2,26 @@ package edu.colostate.cs.dsg.benchmark.storm.topology;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
-import edu.colostate.cs.dsg.benchmark.storm.util.Constants;
-import edu.colostate.cs.dsg.benchmark.storm.bolt.StateChangeDetectionBolt;
-import edu.colostate.cs.dsg.benchmark.storm.util.Util;
 import edu.colostate.cs.dsg.benchmark.storm.bolt.CombinedStateChangeDetectionBolt;
 import edu.colostate.cs.dsg.benchmark.storm.bolt.MonitoringBolt;
 import edu.colostate.cs.dsg.benchmark.storm.bolt.ReportBolt;
+import edu.colostate.cs.dsg.benchmark.storm.bolt.StateChangeDetectionBolt;
 import edu.colostate.cs.dsg.benchmark.storm.spout.FileReaderSpout;
+import edu.colostate.cs.dsg.benchmark.storm.util.Constants;
+import edu.colostate.cs.dsg.benchmark.storm.util.Util;
+import org.apache.log4j.Logger;
 
 /**
  * Author: Thilina
  * Date: 5/19/15
  */
 public class SensorMonitoringTopology {
+
+    private static final Logger LOGGER = Logger.getLogger(SensorMonitoringTopology.class);
 
     public static void main(String[] args) {
         TopologyBuilder builder = new TopologyBuilder();
@@ -55,17 +61,27 @@ public class SensorMonitoringTopology {
                 globalGrouping("Monitoring-710", Util.getMonitoringStreamId(Util.getCorrelatedChangeOfStateStreamId(7,10)));
 
         Config conf = new Config();
-        //conf.put(Config.TOPOLOGY_DEBUG, false);
 
-        conf.setMaxTaskParallelism(20);
-        LocalCluster cluster = new LocalCluster();
-        conf.put(Constants.INPUT_FILE_PATH,args[1]);
-        cluster.submitTopology(args[0], conf, builder.createTopology());
-        try {
-            Thread.sleep(1200 * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(args.length >= 3 && args[2].toLowerCase().equals("local")) {
+            conf.setMaxTaskParallelism(20);
+            LocalCluster cluster = new LocalCluster();
+            conf.put(Constants.INPUT_FILE_PATH, args[1]);
+            cluster.submitTopology(args[0], conf, builder.createTopology());
+            try {
+                Thread.sleep(30*60 * 1000);
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            cluster.shutdown();
+        } else {
+            conf.setNumWorkers(5);
+            try {
+                StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
+            } catch (AlreadyAliveException e) {
+                LOGGER.error(e.getMessage(), e);
+            } catch (InvalidTopologyException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
-        cluster.shutdown();
     }
 }
