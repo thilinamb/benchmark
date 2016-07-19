@@ -39,5 +39,6 @@
 
     <modules>
         <module>debs12</module>
+        <module>relay</module>
     </modules>
 </project>
