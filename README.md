@@ -5,4 +5,4 @@ Currently implemented streaming uses cases include:
  - [Query 1 of DEBS 2012](http://www.csw.inf.fu-berlin.de/debs2012/grandchallenge.html)
  - Message Relay (Sender -> Relay -> Receiver)
 
-These use cases are implemented using [Apache Storm](https://storm.apache.org) and [Granules](http://granules.cs.colostate.edu). We are planning to add implementations from other systems in future.
+These use cases are implemented using [Apache Storm](https://storm.apache.org) and [Granules](http://granules.cs.colostate.edu)(to be moved from our svn). We are planning to add implementations for other systems in future.
