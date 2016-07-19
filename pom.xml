@@ -38,6 +38,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>util</module>
         <module>debs12</module>
         <module>relay</module>
 	<module>health-streams</module>
