@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <storm.version>0.9.4</storm.version>
+        <storm.version>1.0.1</storm.version>
     </properties>
 
     <build>
