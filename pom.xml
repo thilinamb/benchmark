@@ -40,5 +40,6 @@
     <modules>
         <module>debs12</module>
         <module>relay</module>
+	<module>health-streams</module>
     </modules>
 </project>
