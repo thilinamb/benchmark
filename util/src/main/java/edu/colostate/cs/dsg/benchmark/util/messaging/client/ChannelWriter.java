@@ -1,4 +1,4 @@
-package edu.colostate.cs.dsg.benchmark.util.loadprofiles.messaging.client;
+package edu.colostate.cs.dsg.benchmark.util.messaging.client;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
