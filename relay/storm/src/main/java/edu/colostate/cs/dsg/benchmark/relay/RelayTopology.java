@@ -4,6 +4,7 @@ import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
 import org.apache.storm.generated.AlreadyAliveException;
+import org.apache.storm.generated.AuthorizationException;
 import org.apache.storm.generated.InvalidTopologyException;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.log4j.Logger;
@@ -23,7 +24,7 @@ public class RelayTopology {
 
         Config conf = new Config();
         conf.setNumAckers(0);
-        conf.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
+        //conf.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
         conf.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE,            32);
         conf.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384);
         conf.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE,    16384);
@@ -43,9 +44,7 @@ public class RelayTopology {
 
             try {
                 StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
-            } catch (AlreadyAliveException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (InvalidTopologyException e) {
+            } catch (AlreadyAliveException | InvalidTopologyException | AuthorizationException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
