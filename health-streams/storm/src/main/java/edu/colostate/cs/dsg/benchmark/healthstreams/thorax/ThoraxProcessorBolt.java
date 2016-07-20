@@ -1,5 +1,7 @@
 package edu.colostate.cs.dsg.benchmark.healthstreams.thorax;
 
+import edu.colostate.cs.dsg.benchmark.util.messaging.client.MessagingError;
+import edu.colostate.cs.dsg.benchmark.util.messaging.client.SendUtility;
 import org.apache.log4j.Logger;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;
@@ -13,7 +15,7 @@ import java.util.*;
 /**
  * Thorax processing is implemented in this Bolt.
  * A single bolt can handle data for multiple patients.
- * 
+ *
  * @author Thilina Buddhika
  */
 public class ThoraxProcessorBolt extends BaseBasicBolt {
@@ -79,8 +81,8 @@ public class ThoraxProcessorBolt extends BaseBasicBolt {
             buffer.putLong(latency);
             String sourceHostName = "lattice-" + tuple.getShortByField(Constants.SOURCE) + ":23456";
             try {
-                //SendUtility.sendBytes(sourceHostName, buffer.array());
-            } catch (Exception e) {
+                SendUtility.sendBytes(sourceHostName, buffer.array());
+            } catch (MessagingError e) {
                 logger.error("Error sending latency data to the latency tracking server.", e);
             } finally {
                 buffer.flip();
