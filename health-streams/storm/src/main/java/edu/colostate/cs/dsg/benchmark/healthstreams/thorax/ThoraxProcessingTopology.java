@@ -29,7 +29,7 @@ public class ThoraxProcessingTopology {
         // set the number of inputs
         if(args.length >= 3){
             String input = args[2];
-            conf.put(Constants.INPUT_PATH, args[1]);
+            conf.put(Constants.INPUT_PATH, input);
         } else {
             conf.put(Constants.INPUT_PATH, Constants.DEFAULT_INPUT);
         }
@@ -48,7 +48,7 @@ public class ThoraxProcessingTopology {
             conf.setNumWorkers(50 / numberOfJobs);
             try {
                 for (int i = 0; i < numberOfJobs; i++) {
-                    StormSubmitter.submitTopology("debs2012-job-" + i, conf, builder.createTopology());
+                    StormSubmitter.submitTopology("thorax-job-" + i, conf, builder.createTopology());
                     System.out.println("Submitted job " + i);
                 }
             } catch (AlreadyAliveException | InvalidTopologyException | AuthorizationException e) {

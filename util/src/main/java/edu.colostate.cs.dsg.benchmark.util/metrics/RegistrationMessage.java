@@ -9,18 +9,17 @@ import java.util.UUID;
 /**
  * @author Thilina Buddhika
  */
-public class MetricReport {
-
+public class RegistrationMessage {
     private String messageId;
     protected int messageType;
     private String originEndpoint;
-    private double[] metrics;
+    private long ts;
 
-    public MetricReport(double[] metrics, String host) {
-        this.messageType = 23790;
-        this.originEndpoint = host;
+    public RegistrationMessage(long ts, String host) {
         this.messageId = UUID.randomUUID().toString();
-        this.metrics = metrics;
+        this.messageType = 23789;
+        this.originEndpoint = host;
+        this.ts = ts;
     }
 
     public byte[] marshall() throws IOException {
@@ -30,11 +29,8 @@ public class MetricReport {
         dataOutStr.writeInt(this.messageType);
         dataOutStr.writeUTF(this.messageId);
         dataOutStr.writeUTF(this.originEndpoint);
-        // write metrics
-        dataOutStr.writeInt(metrics.length);
-        for (double metric : metrics) {
-            dataOutStr.writeDouble(metric);
-        }
+        // write ts
+        dataOutStr.writeLong(this.ts);
         dataOutStr.flush();
         byte[] marshalledBytes = baOutputStream.toByteArray();
         // cleanup

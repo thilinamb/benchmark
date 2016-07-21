@@ -4,7 +4,7 @@ package edu.colostate.cs.dsg.benchmark.healthstreams.thorax;
  * @author Thilina Buddhika
  */
 class Constants {
-    static final String DEFAULT_INPUT = "/Users/thilina/csu/research/dsg/benchmark/health-streams/storm/thorax-all.csv";
+    static final String DEFAULT_INPUT = "/s/chopin/a/grad/thilinab/research/data/thorax/thorax-all.csv";
     static final String INPUT_PATH = "input-path";
     static final String STREAM_ECG = "ecg-data";
     static final String FIELD_SEQ_NO = "seq-no";

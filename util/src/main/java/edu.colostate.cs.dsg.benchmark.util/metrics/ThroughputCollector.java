@@ -47,6 +47,12 @@ public class ThroughputCollector implements Runnable {
     public synchronized void register(ThroughputProfiler profiler) {
         computationList.add(profiler);
         if (computationList.size() == 1) {
+            RegistrationMessage register = new RegistrationMessage(System.currentTimeMillis(), host);
+            try {
+                SendUtility.sendBytes(STAT_SERVER_URL, register.marshall());
+            } catch (MessagingError | IOException e) {
+                logger.error("Error sending registration message.", e);
+            }
             throughputReporter.scheduleAtFixedRate(this, REPORT_INTERVAL_MS, REPORT_INTERVAL_MS,
                     TimeUnit.MILLISECONDS);
             lastTs = System.currentTimeMillis();
