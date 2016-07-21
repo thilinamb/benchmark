@@ -63,7 +63,7 @@ public class IngestorSpout extends BaseRichSpout {
             } catch (IOException e) {
                 logger.error("Error reading from the file.", e);
             }
-            if (++counter % 100000 == 0) {
+            if (logger.isDebugEnabled() && ++counter % 100000 == 0) {
                 logger.debug("Emitted " + counter + " messages.");
             }
         }

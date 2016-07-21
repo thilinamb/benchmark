@@ -88,7 +88,7 @@ public class ThoraxProcessorBolt extends BaseBasicBolt {
                 buffer.flip();
             }
         }
-        if(++counter % 100000 == 0){
+        if (logger.isDebugEnabled() && counter.incrementAndGet() % 100000 == 0) {
             logger.debug("Processed " + counter + " Messages.");
         }
     }
