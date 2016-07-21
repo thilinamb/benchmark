@@ -69,7 +69,7 @@ public class ThroughputCollector implements Runnable {
         // report this to a centralized stat-server
         // TODO: we are currently using a custom statics server and its supported message formats and endpoints
         double[] metrics = new double[]{throughput, -1, -1};
-        MetricReport metricReport = new MetricReport(metrics, "");
+        MetricReport metricReport = new MetricReport(metrics, host);
         try {
             SendUtility.sendBytes(STAT_SERVER_URL, metricReport.marshall());
         } catch (MessagingError | IOException messagingError) {
