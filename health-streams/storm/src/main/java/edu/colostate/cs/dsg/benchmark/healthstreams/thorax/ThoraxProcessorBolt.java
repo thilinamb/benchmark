@@ -2,6 +2,7 @@ package edu.colostate.cs.dsg.benchmark.healthstreams.thorax;
 
 import edu.colostate.cs.dsg.benchmark.util.messaging.client.MessagingError;
 import edu.colostate.cs.dsg.benchmark.util.messaging.client.SendUtility;
+import edu.colostate.cs.dsg.benchmark.util.metrics.ThroughputCollector;
 import edu.colostate.cs.dsg.benchmark.util.metrics.ThroughputProfiler;
 import org.apache.log4j.Logger;
 import org.apache.storm.task.TopologyContext;
@@ -92,7 +93,14 @@ public class ThoraxProcessorBolt extends BaseBasicBolt implements ThroughputProf
                 buffer.flip();
             }
         }
-        if (logger.isDebugEnabled() && counter.incrementAndGet() % 100000 == 0) {
+
+        counter.incrementAndGet();
+
+        if (counter.get() == 1) {
+            // register itself in the ThroughputCollector
+            ThroughputCollector.getInstance().register(this);
+        }
+        if (logger.isDebugEnabled() && counter.get() % 100000 == 0) {
             logger.debug("Processed " + counter + " Messages.");
         }
     }
