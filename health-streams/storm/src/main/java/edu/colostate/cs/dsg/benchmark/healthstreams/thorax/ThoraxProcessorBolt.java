@@ -2,6 +2,7 @@ package edu.colostate.cs.dsg.benchmark.healthstreams.thorax;
 
 import edu.colostate.cs.dsg.benchmark.util.messaging.client.MessagingError;
 import edu.colostate.cs.dsg.benchmark.util.messaging.client.SendUtility;
+import edu.colostate.cs.dsg.benchmark.util.metrics.ThroughputProfiler;
 import org.apache.log4j.Logger;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;
@@ -11,6 +12,7 @@ import org.apache.storm.tuple.Tuple;
 
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Thorax processing is implemented in this Bolt.
@@ -18,7 +20,7 @@ import java.util.*;
  *
  * @author Thilina Buddhika
  */
-public class ThoraxProcessorBolt extends BaseBasicBolt {
+public class ThoraxProcessorBolt extends BaseBasicBolt implements ThroughputProfiler {
 
     private class PatientData {
         private double min;
@@ -40,7 +42,8 @@ public class ThoraxProcessorBolt extends BaseBasicBolt {
     private Map<Integer, PatientData> patientDataMap;
     private Random random;
     private ByteBuffer buffer;
-    private int counter;
+    private AtomicLong counter;
+    private AtomicLong lastReported;
 
     @Override
     public void prepare(Map stormConf, TopologyContext context) {
@@ -48,7 +51,8 @@ public class ThoraxProcessorBolt extends BaseBasicBolt {
         buffer = ByteBuffer.allocate(Long.BYTES);
         patientDataMap = new Hashtable<>();
         random = new Random(12);
-        counter = 0;
+        counter = new AtomicLong(0);
+        lastReported = new AtomicLong(0);
         logger = Logger.getLogger(ThoraxProcessorBolt.class);
     }
 
@@ -96,5 +100,13 @@ public class ThoraxProcessorBolt extends BaseBasicBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         // no outgoing streams
+    }
+
+    @Override
+    public long getNumberOfMessagesProcessedSinceLastInvocation() {
+        long currentCount = counter.get();
+        long processedMessageCount = currentCount - lastReported.get();
+        lastReported.set(currentCount);
+        return processedMessageCount;
     }
 }
