@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Ingest ECG data from a file
@@ -31,7 +32,7 @@ public class IngestorSpout extends BaseRichSpout {
     private LoadProfile loadProfile;
     private SpoutOutputCollector collector;
     private short hostId;
-    private int counter;
+    private AtomicLong seqNoGen;
 
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         try {
@@ -41,7 +42,7 @@ public class IngestorSpout extends BaseRichSpout {
             this.loadProfile = new FixedRateLoadProfile(0.7);
             this.hostId = getHostId();
             this.collector = spoutOutputCollector;
-            counter = 0;
+            this.seqNoGen = new AtomicLong(0);
         } catch (FileNotFoundException e) {
             logger.error("Error reading input file.", e);
         }
@@ -58,19 +59,19 @@ public class IngestorSpout extends BaseRichSpout {
                     line = bufferedReader.readLine();
                 }
                 String[] segments = line.split(",");
-                collector.emit(Constants.STREAM_ECG, new Values(System.currentTimeMillis(),
+                collector.emit(Constants.STREAM_ECG, new Values(seqNoGen.getAndIncrement(), System.currentTimeMillis(),
                         Integer.parseInt(segments[0]), Double.parseDouble(segments[1]), hostId));
             } catch (IOException e) {
                 logger.error("Error reading from the file.", e);
             }
-            if (logger.isDebugEnabled() && ++counter % 100000 == 0) {
-                logger.debug("Emitted " + counter + " messages.");
+            if (logger.isDebugEnabled() && seqNoGen.get() % 100000 == 0) {
+                logger.debug("Emitted " + seqNoGen.get() + " messages.");
             }
         }
     }
 
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declareStream(Constants.STREAM_ECG, new Fields(Constants.FIELD_TS,
+        outputFieldsDeclarer.declareStream(Constants.STREAM_ECG, new Fields(Constants.FIELD_SEQ_NO, Constants.FIELD_TS,
                 Constants.FIELD_PATIENT_ID, Constants.FIELD_READING, Constants.SOURCE));
     }
 
